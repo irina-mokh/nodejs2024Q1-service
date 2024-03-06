@@ -1,10 +1,11 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { IsBoolean, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class ArtistDto {
   @IsUUID()
   id: string; // uuid v4
 
+  @IsString()
   @IsNotEmpty()
   name: string;
 
