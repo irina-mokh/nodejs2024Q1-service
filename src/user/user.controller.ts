@@ -13,50 +13,68 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdatePasswordDto, UserDto } from './user.dto';
+import {
+  CreateUserDto as C,
+  UpdatePasswordDto as U,
+  UserDto as T,
+} from './user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private service: UserService) {}
 
+  // TODO: DRY ->
   @Get()
-  async getAll(): Promise<UserDto[]> {
-    return this.userService.getAll();
+  async getAll(): Promise<T[]> {
+    return this.service.getAll();
   }
 
   @Get(':id')
-  async getById(@Param('id', ParseUUIDPipe) id: string): Promise<UserDto> {
-    const user = this.userService.getById(id);
-    if (!user) throw new NotFoundException('User is not found.');
-    return user;
+  async getById(@Param('id', ParseUUIDPipe) id: string): Promise<T> {
+    const item = this.service.getById(id);
+    if (!item) throw new NotFoundException(`Not found.`);
+    return item;
   }
 
+  // @Put(':id')
+  // async update(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  //   @Body(ValidationPipe) dto: U,
+  // ) {
+  //   const item = this.service.getById(id);
+  //   if (!item) throw new NotFoundException(`Not found.`);
+
+  //   return this.service.update(id, dto);
+  // }
+
+  @HttpCode(204)
+  @Delete(':id')
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
+    const item = this.service.getById(id);
+    if (!item) throw new NotFoundException(`Not found.`);
+    this.service.delete(id);
+  }
+  // <- TODO: DRY
+
+  // ! differs
   @HttpCode(201)
   @Post()
-  createUser(@Body(ValidationPipe) dto: CreateUserDto) {
-    return this.userService.createUser(dto);
+  create(@Body(ValidationPipe) dto: C) {
+    return this.service.createUser(dto);
   }
 
   @Put(':id')
   async updatePass(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) { oldPassword, newPassword }: UpdatePasswordDto,
+    @Body(ValidationPipe) { oldPassword, newPassword }: U,
   ) {
-    const user = this.userService.getById(id);
+    const user = this.service.getById(id);
     if (!user) throw new NotFoundException('User is not found.');
 
-    const pass = this.userService.getById(id).password;
+    const pass = this.service.getById(id).password;
     if (pass !== oldPassword)
       throw new ForbiddenException('Old password is wrong.');
 
-    return this.userService.updatePass(id, newPassword);
-  }
-
-  @HttpCode(204)
-  @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
-    const user = this.userService.getById(id);
-    if (!user) throw new NotFoundException('User is not found.');
-    this.userService.delete(id);
+    return this.service.updatePass(id, newPassword);
   }
 }

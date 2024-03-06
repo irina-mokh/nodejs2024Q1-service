@@ -11,16 +11,25 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { TrackService } from './track.service';
+import { ArtistService } from './artist.service';
 import {
-  CreateTrackDto as C,
-  UpdateTrackDto as U,
-  TrackDto as T,
-} from './track.dto';
+  CreateArtistDto as C,
+  UpdateArtistDto as U,
+  ArtistDto as T,
+} from './artist.dto';
 
-@Controller('track')
-export class TrackController {
-  constructor(private service: TrackService) {}
+@Controller('artist')
+// export class ArtistController extends TemplateController<
+//   ArtistDto,
+//   CreateArtistDto,
+//   UpdateArtistDto
+// > {
+//   constructor(service: ArtistService) {
+//     super(service);
+//   }
+// }
+export class ArtistController {
+  constructor(private service: ArtistService) {}
 
   // TODO: DRY ->
   @Get()
@@ -52,12 +61,17 @@ export class TrackController {
     return this.service.update(id, dto);
   }
 
+  // <- TODO: DRY
+
+  // ! differs
   @HttpCode(204)
   @Delete(':id')
   async delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     this.service.delete(id);
+
+    //replace artistId with NULL
+    this.service.removeArtistId(id);
   }
-  // <- TODO: DRY
 }

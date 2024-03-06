@@ -14,6 +14,6 @@ export class TrackDto {
   duration: number; // integer number
 }
 
-export class PartialTrackDto extends PartialType(TrackDto) {}
+export class UpdateTrackDto extends PartialType(TrackDto) {}
 
 export class CreateTrackDto extends OmitType(TrackDto, ['id'] as const) {}

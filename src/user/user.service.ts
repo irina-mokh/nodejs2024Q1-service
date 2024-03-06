@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UserDto } from './user.dto';
 import { v4 as uuid } from 'uuid';
 import { TemplateService } from 'src/template/template.service';
+import { db } from 'src/db/db';
+const { users } = db;
 
 @Injectable()
 export class UserService extends TemplateService<UserDto> {
+  constructor() {
+    super(users);
+  }
   omitPass(user: UserDto) {
     const { password, ...rest } = user;
     return rest;
