@@ -8,7 +8,6 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
   Put,
   ValidationPipe,

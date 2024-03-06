@@ -1,19 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UserDto } from './user.dto';
 import { v4 as uuid } from 'uuid';
+import { TemplateService } from 'src/template/template.service';
 
 @Injectable()
-export class UserService {
-  private users: UserDto[] = [];
-
-  getAll(): UserDto[] {
-    return this.users;
-  }
-
-  getById(id: string): UserDto {
-    return this.users.find((user) => user.id === id);
-  }
-
+export class UserService extends TemplateService<UserDto> {
   omitPass(user: UserDto) {
     const { password, ...rest } = user;
     return rest;
@@ -28,7 +19,7 @@ export class UserService {
       updatedAt: +new Date(),
     };
 
-    this.users.push(user);
+    this.items.push(user);
     return this.omitPass(user);
   }
 
@@ -39,9 +30,5 @@ export class UserService {
     user.password = newPassword;
 
     return this.omitPass(user);
-  }
-
-  delete(id: string) {
-    this.users = this.users.filter((user) => user.id !== id);
   }
 }
