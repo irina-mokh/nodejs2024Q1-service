@@ -33,6 +33,7 @@ export class TemplateService<T extends ItemDto> {
   }
 
   delete(id: string) {
-    this.items = this.items.filter((track) => track.id !== id);
+    const i = this.items.findIndex((item) => item.id === id);
+    if (i > -1) this.items.splice(i, 1);
   }
 }

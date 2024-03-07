@@ -9,9 +9,9 @@ export const db = {
   albums: [],
   artists: [],
   favorites: {
-    albums: [],
-    artists: [],
-    tracks: [],
+    albums: new Map(),
+    artists: new Map(),
+    tracks: new Map(),
   },
 };
 
@@ -20,9 +20,11 @@ export interface DBType {
   tracks: TrackDto[];
   albums: AlbumDto[];
   artists: ArtistDto[];
-  favorites: {
-    albums: AlbumDto[];
-    artists: ArtistDto[];
-    tracks: TrackDto[];
-  };
+  favorites: DBFavorites;
+}
+
+export interface DBFavorites {
+  albums: Map<string, AlbumDto>;
+  artists: Map<string, ArtistDto>;
+  tracks: Map<string, TrackDto>;
 }

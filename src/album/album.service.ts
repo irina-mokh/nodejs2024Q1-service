@@ -3,16 +3,24 @@ import { TemplateService } from 'src/template/template.service';
 import { db } from 'src/db/db';
 import { AlbumDto } from './album.dto';
 
-const { albums, tracks } = db;
 @Injectable()
 export class AlbumService extends TemplateService<AlbumDto> {
   constructor() {
-    super(albums);
+    super(db.albums);
   }
 
   removeAlbumId(id: string) {
-    tracks.forEach((track) => {
-      if (track.albumId === id) track.albumId = null;
+    db.tracks.forEach((track) => {
+      if (track.albumId === id) {
+        track.albumId = null;
+      }
     });
+  }
+
+  removeFromFavs(id: string) {
+    const items = db.favorites.albums;
+    if (items.has(id)) {
+      items.delete(id);
+    }
   }
 }

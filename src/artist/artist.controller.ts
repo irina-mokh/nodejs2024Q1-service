@@ -33,12 +33,12 @@ export class ArtistController {
 
   // TODO: DRY ->
   @Get()
-  async getAll(): Promise<T[]> {
+  getAll(): T[] {
     return this.service.getAll();
   }
 
   @Get(':id')
-  async getById(@Param('id', ParseUUIDPipe) id: string): Promise<T> {
+  getById(@Param('id', ParseUUIDPipe) id: string): T {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
@@ -51,10 +51,7 @@ export class ArtistController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) dto: U,
-  ) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body(ValidationPipe) dto: U) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
@@ -66,12 +63,13 @@ export class ArtistController {
   // ! differs
   @HttpCode(204)
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
+  delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
-    this.service.delete(id);
 
     //replace artistId with NULL
+    this.service.removeFromFavs(id);
     this.service.removeArtistId(id);
+    this.service.delete(id);
   }
 }
