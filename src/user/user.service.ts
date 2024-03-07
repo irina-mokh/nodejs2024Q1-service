@@ -10,8 +10,9 @@ export class UserService extends TemplateService<UserDto> {
     super(db.users);
   }
   omitPass(user: UserDto) {
-    const { password, ...rest } = user;
-    return rest;
+    const clone = { ...user };
+    delete clone.password;
+    return clone;
   }
 
   createUser(dto: CreateUserDto) {

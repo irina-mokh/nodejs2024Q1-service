@@ -19,15 +19,6 @@ import {
 } from './artist.dto';
 
 @Controller('artist')
-// export class ArtistController extends TemplateController<
-//   ArtistDto,
-//   CreateArtistDto,
-//   UpdateArtistDto
-// > {
-//   constructor(service: ArtistService) {
-//     super(service);
-//   }
-// }
 export class ArtistController {
   constructor(private service: ArtistService) {}
 
@@ -67,7 +58,6 @@ export class ArtistController {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
-    //replace artistId with NULL
     this.service.removeFromFavs(id);
     this.service.removeArtistId(id);
     this.service.delete(id);
