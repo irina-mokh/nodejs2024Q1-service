@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
 
+const PORT = process.env.PORT || 4000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -12,6 +13,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('doc', app, parse(apiFile));
 
-  await app.listen(4000);
+  console.log('PORT: ', PORT);
+  await app.listen(PORT);
 }
 bootstrap();
