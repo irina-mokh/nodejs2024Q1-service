@@ -23,14 +23,13 @@ import {
 export class UserController {
   constructor(private service: UserService) {}
 
-  // TODO: DRY ->
   @Get()
-  getAll(): T[] {
+  getAll() {
     return this.service.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string): T {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
@@ -38,18 +37,16 @@ export class UserController {
 
   @HttpCode(204)
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     this.service.delete(id);
   }
-  // <- TODO: DRY
 
-  // ! differs
   @HttpCode(201)
   @Post()
   create(@Body(ValidationPipe) dto: C) {
-    return this.service.createUser(dto);
+    return this.service.create(dto);
   }
 
   @Put(':id')
@@ -57,11 +54,12 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body(ValidationPipe) { oldPassword, newPassword }: U,
   ) {
-    const user = this.service.getById(id);
+    const user = await this.service.db.user.findUnique({
+      where: { id },
+    });
     if (!user) throw new NotFoundException('User is not found.');
 
-    const pass = this.service.getById(id).password;
-    if (pass !== oldPassword)
+    if (user.password !== oldPassword)
       throw new ForbiddenException('Old password is wrong.');
 
     return this.service.updatePass(id, newPassword);

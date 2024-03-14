@@ -7,8 +7,8 @@ export class UserDto {
   password: string;
   @IsInt()
   version: number; // integer number, increments on update
-  createdAt: number; // timestamp of creation
-  updatedAt: number; // timestamp of last update
+  createdAt: Date; // timestamp of creation
+  updatedAt: Date; // timestamp of last update
 }
 
 export class CreateUserDto {
@@ -30,3 +30,5 @@ export class UpdatePasswordDto {
   @IsNotEmpty()
   newPassword: string; // new password
 }
+
+// export type UserSafe = Omit<UserDto, 'password'>;

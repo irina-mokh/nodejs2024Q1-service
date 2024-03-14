@@ -1,33 +1,29 @@
-import { db } from 'src/db/db';
-import { ItemsUnion } from 'src/template/template.dto';
-
-const { favorites } = db;
+import { DBService } from 'src/db/db.service';
 
 export class FavsService {
-  db = db;
-  items = favorites;
+  constructor(readonly db: DBService) {}
 
-  getAll = () => ({
-    tracks: [...Array.from(this.items.tracks.values())],
-    albums: [...Array.from(this.items.albums.values())],
-    artists: [...Array.from(this.items.artists.values())],
-  });
+  async getAll() {
+    return this.db.favorites.findMany();
+  }
 
-  addItem(id: string, key: string) {
-    const item = this.getDbInstance(id, key);
-    favorites[key].set(id, item);
+  async addItem(id: string, key: string) {
+    const item = await this.getDbInstance(id, key);
+    this.db.favorites[key].create({
+      data: { item },
+    });
     return item;
   }
 
   deleteItem(id: string, key: string) {
-    favorites[key].delete(id);
+    this.db.favorites[key].delete(id);
   }
 
   isFavorite(id: string, key: string) {
-    return favorites[key].has(id);
+    return Boolean(this.getDbInstance(id, key));
   }
 
-  getDbInstance(id: string, key: string) {
-    return this.db[key].find((item: ItemsUnion) => item.id === id);
+  async getDbInstance(id: string, key: string) {
+    return this.db.favorites[key].findUnique({ where: { id } });
   }
 }

@@ -1,39 +1,63 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, UserDto } from './user.dto';
-import { v4 as uuid } from 'uuid';
-import { TemplateService } from 'src/template/template.service';
-import { db } from 'src/db/db';
+import { CreateUserDto as C, UserDto as T } from './user.dto';
+import { DBService } from 'src/db/db.service';
+
+const omitPass = {
+  id: true,
+  login: true,
+  version: true,
+  createdAt: true,
+  updatedAt: true,
+};
 
 @Injectable()
-export class UserService extends TemplateService<UserDto> {
-  constructor() {
-    super(db.users);
-  }
-  omitPass(user: UserDto) {
+export class UserService {
+  constructor(readonly db: DBService) {}
+
+  hidePass(user: T) {
     const clone = { ...user };
     delete clone.password;
     return clone;
   }
 
-  createUser(dto: CreateUserDto) {
-    const user: UserDto = {
-      ...dto,
-      id: uuid(),
-      version: 1,
-      createdAt: +new Date(),
-      updatedAt: +new Date(),
-    };
-
-    this.items.push(user);
-    return this.omitPass(user);
+  async getAll() {
+    return await this.db.user.findMany({
+      select: omitPass,
+    });
   }
 
-  updatePass(id: string, newPassword: string) {
-    const user: UserDto = this.getById(id);
-    user.updatedAt = +new Date();
-    user.version = user.version + 1;
-    user.password = newPassword;
+  async getById(id: string) {
+    return this.db.user.findUnique({
+      where: { id },
+      select: omitPass,
+    });
+  }
 
-    return this.omitPass(user);
+  async create(dto: C) {
+    return await this.db.user.create({
+      data: dto,
+      select: omitPass,
+    });
+  }
+
+  async updatePass(id: string, newPassword: string) {
+    const user: T = await this.db.user.findUnique({
+      where: { id },
+    });
+
+    const updUser = await this.db.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+        version: user.version + 1,
+      },
+      select: omitPass,
+    });
+
+    return updUser;
+  }
+
+  async delete(id: string) {
+    await this.db.user.delete({ where: { id } });
   }
 }

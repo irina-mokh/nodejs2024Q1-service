@@ -10,7 +10,8 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
-import { DBFavorites } from 'src/db/db';
+import { Favorites } from '@prisma/client';
+// import { DBFavorites } from 'src/db/db';
 
 @Controller('favs')
 export class FavsController {
@@ -24,7 +25,7 @@ export class FavsController {
   @Post(':source/:id')
   addToFavorite(
     @Param('id', ParseUUIDPipe) id: string,
-    @Param('source') src: keyof DBFavorites,
+    @Param('source') src: keyof Favorites,
   ) {
     const key = src + 's';
     const item = this.service.getDbInstance(id, key);
@@ -35,9 +36,9 @@ export class FavsController {
 
   @HttpCode(204)
   @Delete(':source/:id')
-  removeFromFAvorite(
+  removeFromFavorite(
     @Param('id', ParseUUIDPipe) id: string,
-    @Param('source') src: keyof DBFavorites,
+    @Param('source') src: keyof Favorites,
   ) {
     const key = src + 's';
 

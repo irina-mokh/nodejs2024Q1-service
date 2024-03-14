@@ -22,14 +22,13 @@ import {
 export class TrackController {
   constructor(private service: TrackService) {}
 
-  // TODO: DRY ->
   @Get()
-  getAll(): T[] {
+  getAll() {
     return this.service.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string): T {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
@@ -49,14 +48,13 @@ export class TrackController {
     return this.service.update(id, dto);
   }
 
-  // <- TODO: DRY
   @HttpCode(204)
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
-    this.service.removeFromFavs(id);
+    // this.service.removeFromFavs(id);
     this.service.delete(id);
   }
 }

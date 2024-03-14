@@ -24,12 +24,12 @@ export class AlbumController {
 
   // TODO: DRY ->
   @Get()
-  getAll(): T[] {
+  getAll() {
     return this.service.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string): T {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
@@ -49,18 +49,14 @@ export class AlbumController {
     return this.service.update(id, dto);
   }
 
-  // <- TODO: DRY
-
-  // ! differs
   @HttpCode(204)
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
-
     //replace artistId with NULL
-    this.service.removeAlbumId(id);
-    this.service.removeFromFavs(id);
+    // this.service.removeAlbumId(id);
+    // this.service.removeFromFavs(id);
     this.service.delete(id);
   }
 }

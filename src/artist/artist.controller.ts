@@ -22,14 +22,13 @@ import {
 export class ArtistController {
   constructor(private service: ArtistService) {}
 
-  // TODO: DRY ->
   @Get()
-  getAll(): T[] {
+  getAll() {
     return this.service.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string): T {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
@@ -49,17 +48,14 @@ export class ArtistController {
     return this.service.update(id, dto);
   }
 
-  // <- TODO: DRY
-
-  // ! differs
   @HttpCode(204)
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
     const item = this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
-    this.service.removeFromFavs(id);
-    this.service.removeArtistId(id);
+    // this.service.removeFromFavs(id);
+    // this.service.removeArtistId(id);
     this.service.delete(id);
   }
 }
