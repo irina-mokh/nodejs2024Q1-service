@@ -12,25 +12,20 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
-import {
-  CreateAlbumDto as C,
-  UpdateAlbumDto as U,
-  AlbumDto as T,
-} from './album.dto';
+import { CreateAlbumDto as C, UpdateAlbumDto as U } from './album.dto';
 
 @Controller('album')
 export class AlbumController {
   constructor(private service: AlbumService) {}
 
-  // TODO: DRY ->
   @Get()
   getAll() {
     return this.service.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async getById(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
   }
@@ -42,8 +37,11 @@ export class AlbumController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body(ValidationPipe) dto: U) {
-    const item = this.service.getById(id);
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) dto: U,
+  ) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
     return this.service.update(id, dto);
@@ -51,12 +49,10 @@ export class AlbumController {
 
   @HttpCode(204)
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
-    //replace artistId with NULL
-    // this.service.removeAlbumId(id);
-    // this.service.removeFromFavs(id);
+
     this.service.delete(id);
   }
 }

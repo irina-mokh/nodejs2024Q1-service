@@ -12,11 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
-import {
-  CreateArtistDto as C,
-  UpdateArtistDto as U,
-  ArtistDto as T,
-} from './artist.dto';
+import { CreateArtistDto as C, UpdateArtistDto as U } from './artist.dto';
 
 @Controller('artist')
 export class ArtistController {
@@ -28,8 +24,8 @@ export class ArtistController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async getById(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
   }
@@ -41,8 +37,11 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body(ValidationPipe) dto: U) {
-    const item = this.service.getById(id);
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) dto: U,
+  ) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
     return this.service.update(id, dto);
@@ -50,12 +49,10 @@ export class ArtistController {
 
   @HttpCode(204)
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
-    // this.service.removeFromFavs(id);
-    // this.service.removeArtistId(id);
     this.service.delete(id);
   }
 }

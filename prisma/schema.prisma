@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id          String      @id @default(uuid())
-  login       String      @unique
+  login       String      
   password    String
   version     Int         @default(1)
   createdAt   DateTime    @default(now())
@@ -53,7 +53,9 @@ model Track {
 }
 
 model Favorites {
-  id      String  @id @default(uuid())
+  // temporary id for user
+  id      String  @id @default("1")
+  // id      String  @id @default(uuid())
   // user    User?   @relation(fields: [id], references: [id])
   artists Artist[]
   albums  Album[]

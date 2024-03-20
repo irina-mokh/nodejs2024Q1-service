@@ -12,11 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
-import {
-  CreateTrackDto as C,
-  UpdateTrackDto as U,
-  TrackDto as T,
-} from './track.dto';
+import { CreateTrackDto as C, UpdateTrackDto as U } from './track.dto';
 
 @Controller('track')
 export class TrackController {
@@ -28,8 +24,8 @@ export class TrackController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async getById(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
   }
@@ -41,8 +37,11 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body(ValidationPipe) dto: U) {
-    const item = this.service.getById(id);
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) dto: U,
+  ) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
     return this.service.update(id, dto);
@@ -50,11 +49,9 @@ export class TrackController {
 
   @HttpCode(204)
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
-
-    // this.service.removeFromFavs(id);
     this.service.delete(id);
   }
 }

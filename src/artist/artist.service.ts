@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateArtistDto as C,
-  UpdateArtistDto as U,
-  ArtistDto as T,
-} from './artist.dto';
+import { CreateArtistDto as C, UpdateArtistDto as U } from './artist.dto';
 import { DBService } from 'src/db/db.service';
 
 @Injectable()
@@ -38,21 +34,4 @@ export class ArtistService {
   async delete(id: string) {
     await this.db.artist.delete({ where: { id } });
   }
-
-  // removeArtistId(id: string) {
-  //   this.db.album.forEach((album) => {
-  //     if (album.artistId === id) album.artistId = null;
-  //   });
-
-  //   this.db.track.forEach((track) => {
-  //     if (track.artistId === id) track.artistId = null;
-  //   });
-  // }
-
-  // removeFromFavs(id: string) {
-  //   const items = db.favorites.artists;
-  //   if (items.has(id)) {
-  //     items.delete(id);
-  //   }
-  // }
 }

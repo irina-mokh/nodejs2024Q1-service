@@ -13,11 +13,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-  CreateUserDto as C,
-  UpdatePasswordDto as U,
-  UserDto as T,
-} from './user.dto';
+import { CreateUserDto as C, UpdatePasswordDto as U } from './user.dto';
+
+export const USER_ID = '1';
 
 @Controller('user')
 export class UserController {
@@ -29,8 +27,8 @@ export class UserController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+  async getById(@Param('id', ParseUUIDPipe) id: string) {
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     return item;
   }
@@ -38,7 +36,7 @@ export class UserController {
   @HttpCode(204)
   @Delete(':id')
   async delete(@Param('id', ParseUUIDPipe) id: string) {
-    const item = this.service.getById(id);
+    const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
     this.service.delete(id);
   }

@@ -1,29 +1,77 @@
+import { Injectable } from '@nestjs/common';
 import { DBService } from 'src/db/db.service';
+import { USER_ID } from 'src/user/user.controller';
 
+@Injectable()
 export class FavsService {
   constructor(readonly db: DBService) {}
 
   async getAll() {
-    return this.db.favorites.findMany();
+    const favs = await this.db.favorites.findMany({
+      where: { id: USER_ID },
+      include: {
+        artists: true,
+        albums: true,
+        tracks: true,
+      },
+    });
+    return {
+      ...favs[0],
+    };
   }
 
   async addItem(id: string, key: string) {
-    const item = await this.getDbInstance(id, key);
-    this.db.favorites[key].create({
-      data: { item },
+    await this.db.favorites.update({
+      where: {
+        id: USER_ID,
+      },
+      data: {
+        [key]: {
+          connect: {
+            id,
+          },
+        },
+      },
     });
-    return item;
   }
 
-  deleteItem(id: string, key: string) {
-    this.db.favorites[key].delete(id);
+  async deleteItem(id: string, key: string) {
+    await this.db.favorites.update({
+      where: {
+        id: USER_ID,
+      },
+      data: {
+        [key]: {
+          disconnect: {
+            id,
+          },
+        },
+      },
+    });
+    return id;
   }
 
-  isFavorite(id: string, key: string) {
-    return Boolean(this.getDbInstance(id, key));
+  async getDbInstance(id: string, src: string) {
+    const table = this.db[src];
+    const instance = await table.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return instance;
   }
 
-  async getDbInstance(id: string, key: string) {
-    return this.db.favorites[key].findUnique({ where: { id } });
+  async isFavorite(id: string, key: string) {
+    const fav = await this.db.favorites.findMany({
+      where: { id: USER_ID },
+      include: {
+        [key]: {
+          where: {
+            id,
+          },
+        },
+      },
+    });
+    return !!fav;
   }
 }

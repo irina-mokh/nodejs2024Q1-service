@@ -27,17 +27,22 @@ export class UserService {
   }
 
   async getById(id: string) {
-    return this.db.user.findUnique({
+    return await this.db.user.findUnique({
       where: { id },
       select: omitPass,
     });
   }
 
   async create(dto: C) {
-    return await this.db.user.create({
+    const item = await this.db.user.create({
       data: dto,
       select: omitPass,
     });
+    return {
+      ...item,
+      createdAt: new Date(item.createdAt).getTime(),
+      updatedAt: new Date(item.updatedAt).getTime(),
+    };
   }
 
   async updatePass(id: string, newPassword: string) {
@@ -54,7 +59,11 @@ export class UserService {
       select: omitPass,
     });
 
-    return updUser;
+    return {
+      ...updUser,
+      createdAt: new Date(updUser.createdAt).getTime(),
+      updatedAt: new Date(updUser.updatedAt).getTime(),
+    };
   }
 
   async delete(id: string) {

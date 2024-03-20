@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateTrackDto as C,
-  UpdateTrackDto as U,
-  TrackDto as T,
-} from './track.dto';
+import { CreateTrackDto as C, UpdateTrackDto as U } from './track.dto';
 import { DBService } from 'src/db/db.service';
 
 @Injectable()
@@ -38,10 +34,4 @@ export class TrackService {
   async delete(id: string) {
     await this.db.track.delete({ where: { id } });
   }
-  // removeFromFavs(id: string) {
-  //   const items = db.favorites.tracks;
-  //   if (items.has(id)) {
-  //     items.delete(id);
-  //   }
-  // }
 }

@@ -1,8 +1,18 @@
-FROM node:alpine
-WORKDIR /src
-COPY package*.json ./
+FROM node:20.11-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+COPY prisma ./prisma/
+
 RUN npm install
+
 COPY . .
+
 # RUN npx prisma generate
+
 EXPOSE ${PORT}
-CMD [ "npm", "run", "start:dev" ]
+
+CMD npx prisma migrate dev && npm run start:dev
+
