@@ -20,58 +20,61 @@ export class FavsService {
     };
   }
 
-  async addItem(id: string, key: string) {
-    await this.db.favorites.update({
-      where: {
-        id: USER_ID,
-      },
+  async like(id: string, src: string) {
+    await this.db[src].update({
+      where: { id },
       data: {
-        [key]: {
-          connect: {
-            id,
-          },
+        followers: {
+          connect: { id: USER_ID },
         },
       },
     });
   }
 
-  async deleteItem(id: string, key: string) {
-    await this.db.favorites.update({
-      where: {
-        id: USER_ID,
-      },
+  async unlike(id: string, src: string) {
+    await this.db[src].update({
+      where: { id },
       data: {
-        [key]: {
-          disconnect: {
-            id,
-          },
+        followers: {
+          disconnect: { id: USER_ID },
         },
       },
     });
-    return id;
   }
 
   async getDbInstance(id: string, src: string) {
-    const table = this.db[src];
-    const instance = await table.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    let instance = null;
+    try {
+      instance = await this.db[src].findUnique({
+        where: {
+          id: id,
+        },
+      });
+    } catch (err) {
+      console.log('getDBInstance err');
+      console.log(err);
+    }
     return instance;
   }
 
-  async isFavorite(id: string, key: string) {
-    const fav = await this.db.favorites.findMany({
-      where: { id: USER_ID },
-      include: {
-        [key]: {
-          where: {
-            id,
+  async isFavorite(id: string, src: string) {
+    let follower = null;
+    try {
+      follower = await this.db[src].findUnique({
+        where: { id },
+        include: {
+          followers: {
+            where: {
+              id: USER_ID,
+            },
           },
         },
-      },
-    });
-    return !!fav;
+      });
+    } catch (err) {
+      console.log('is Fav err');
+      console.log(err);
+    }
+
+    return !!follower;
   }
 }

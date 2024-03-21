@@ -53,6 +53,6 @@ export class ArtistController {
     const item = await this.service.getById(id);
     if (!item) throw new NotFoundException(`Not found.`);
 
-    this.service.delete(id);
+    await this.service.delete(id);
   }
 }

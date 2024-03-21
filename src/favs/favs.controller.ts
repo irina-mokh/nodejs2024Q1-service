@@ -26,11 +26,10 @@ export class FavsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('source') src: keyof Favorites,
   ) {
-    const key = src + 's';
     const item = await this.service.getDbInstance(id, src);
 
     if (!item) throw new UnprocessableEntityException('Entity does not exist');
-    return await this.service.addItem(id, key);
+    return await this.service.like(id, src);
   }
 
   @HttpCode(204)
@@ -39,10 +38,9 @@ export class FavsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('source') src: keyof Favorites,
   ) {
-    const key = src + 's';
-    if (!(await this.service.isFavorite(id, key)))
+    if (!(await this.service.isFavorite(id, src)))
       throw new NotFoundException(`This item is not favorite.`);
 
-    await this.service.deleteItem(id, key);
+    await this.service.unlike(id, src);
   }
 }
