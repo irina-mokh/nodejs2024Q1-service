@@ -16,6 +16,9 @@ export class FavsService {
       },
     });
     return {
+      artists: [],
+      albums: [],
+      tracks: [],
       ...favs[0],
     };
   }
@@ -25,7 +28,10 @@ export class FavsService {
       where: { id },
       data: {
         followers: {
-          connect: { id: USER_ID },
+          connectOrCreate: {
+            where: { id: USER_ID },
+            create: { id: USER_ID },
+          },
         },
       },
     });

@@ -2,22 +2,19 @@ version: '3.8'
 name: hls
 services:
   db:
-    # container_name: 'db'
+    container_name: 'db'
     build: 
       context: .
       dockerfile: db_Dockerfile
     restart: always
     env_file:
       - .env
+
     volumes:
       - db:/var/lib/postgresql/data
+      - db-logs:/var/log/postgresql
     ports:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - my_net
 
@@ -30,11 +27,6 @@ services:
       - '${PORT}:${PORT}'
     env_file:
       - .env
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - my_net
     depends_on:
@@ -42,6 +34,7 @@ services:
 
 volumes:
   db:
+  db-logs:
 
 networks:
   my_net:
