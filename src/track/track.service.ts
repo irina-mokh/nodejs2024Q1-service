@@ -1,37 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto as C, UpdateTrackDto as U } from './track.dto';
 import { DBService } from 'src/db/db.service';
+import { CRUDService } from 'src/crud/crud.service';
+import { Track as T } from '@prisma/client';
 
 @Injectable()
-export class TrackService {
-  constructor(readonly db: DBService) {}
-
-  async getAll() {
-    return await this.db.track.findMany();
-  }
-
-  async getById(id: string) {
-    return this.db.track.findUnique({
-      where: { id },
-    });
-  }
-
-  async create(dto: C) {
-    return await this.db.track.create({
-      data: dto,
-    });
-  }
-
-  async update(id: string, dto: U) {
-    const updItem = await this.db.track.update({
-      where: { id },
-      data: dto,
-    });
-
-    return updItem;
-  }
-
-  async delete(id: string) {
-    await this.db.track.delete({ where: { id } });
+export class TrackService extends CRUDService<T, C, U> {
+  constructor(db: DBService) {
+    super(db, 'track');
   }
 }

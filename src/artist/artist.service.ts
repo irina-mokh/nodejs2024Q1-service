@@ -1,37 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArtistDto as C, UpdateArtistDto as U } from './artist.dto';
+import {
+  CreateArtistDto as C,
+  UpdateArtistDto as U,
+  // ArtistDto as T,
+} from './artist.dto';
 import { DBService } from 'src/db/db.service';
+import { CRUDService } from 'src/crud/crud.service';
+import { Artist as T } from '@prisma/client';
 
 @Injectable()
-export class ArtistService {
-  constructor(readonly db: DBService) {}
-
-  async getAll() {
-    return await this.db.artist.findMany();
+export class ArtistService extends CRUDService<T, C, U> {
+  constructor(db: DBService) {
+    super(db, 'artist');
   }
 
-  async getById(id: string) {
-    return this.db.artist.findUnique({
-      where: { id },
-    });
-  }
+  // async getAll() {
+  //   return await this.db.artist.findMany();
+  // }
 
-  async create(dto: C) {
-    return await this.db.artist.create({
-      data: dto,
-    });
-  }
+  // async getById(id: string) {
+  //   return this.db.artist.findUnique({
+  //     where: { id },
+  //   });
+  // }
 
-  async update(id: string, dto: U) {
-    const updItem = await this.db.artist.update({
-      where: { id },
-      data: dto,
-    });
+  // async create(dto: C) {
+  //   return await this.db.artist.create({
+  //     data: dto,
+  //   });
+  // }
 
-    return updItem;
-  }
+  // async update(id: string, dto: U) {
+  //   const updItem = await this.db.artist.update({
+  //     where: { id },
+  //     data: dto,
+  //   });
 
-  async delete(id: string) {
-    await this.db.artist.delete({ where: { id } });
-  }
+  //   return updItem;
+  // }
+
+  // async delete(id: string) {
+  //   await this.db.artist.delete({ where: { id } });
+  // }
 }
