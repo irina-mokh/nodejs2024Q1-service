@@ -30,14 +30,11 @@ To run only specific test suite with authorization
 ```npm run test:auth -- <path to suite>```
 
 
-6. Run Docker containers with network:  
-```docker compose up```
-
-7. Run script for vulnerabilities scanning  
+6. Run script for vulnerabilities scanning  
 ```npm run docker-scan:app ```  
 ```npm run docker-scan:db ```
 
-8. [Docker hub repo for app](https://hub.docker.com/repository/docker/irinamokh/hls-app/general)
+7. [Docker hub repo for app](https://hub.docker.com/repository/docker/irinamokh/hls-app/general)
 
 ## Run locally  
 To run app locally, set POSTGRES_HOST="localhost".
