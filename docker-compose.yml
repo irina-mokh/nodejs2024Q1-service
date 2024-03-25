@@ -1,0 +1,44 @@
+version: '3.8'
+name: hls
+services:
+  db:
+    container_name: 'db'
+    build: 
+      context: .
+      dockerfile: db_Dockerfile
+    restart: always
+    env_file:
+      - .env
+
+    volumes:
+      - db:/var/lib/postgresql/data
+      - db-logs:/var/log/postgresql
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    networks:
+      - my_net
+
+  app:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+     - ./src:/app/src/
+    ports:
+      - '${PORT}:${PORT}'
+    env_file:
+      - .env
+    networks:
+      - my_net
+    depends_on:
+      - db
+
+volumes:
+  db:
+  db-logs:
+
+networks:
+  my_net:
+    driver: bridge
+  
